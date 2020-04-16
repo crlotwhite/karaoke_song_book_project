@@ -19,6 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+#TODO: 시크릿 노출 주의
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '=1c1&^uyd_^k(42t=muvi*qd!l2ue6!)wizzg^=c&^-l1riqgp'
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'songbook.apps.SongbookConfig',
+    'utils.apps.UtilsConfig',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,7 @@ WSGI_APPLICATION = 'karaoke_song_book_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+#TODO: Mysql로 변경 필요
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -105,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
+#TODO: 언어 및 타임 존 설정 바꾸기
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
