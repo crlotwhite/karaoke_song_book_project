@@ -13,3 +13,7 @@ from django.shortcuts import render
     - 앨범아트는 필요할까? 저작권 물어보기
     (크롤링 해올 만한 곳을 찾아보기!!)
 """
+
+
+def test():
+    pass
