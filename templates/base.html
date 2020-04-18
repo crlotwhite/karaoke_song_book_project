@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>푸린도서관(Purin Library)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Noel">
+    <meta name="description" content="오타쿠들을 위한 노래방 책 (Song Dictionary for Otakus)">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <style>
+        main>.container-fluid {
+            padding: 80px 15px 100px 15px;
+        }
+
+        main>.container {
+            padding: 80px 15px 100px 15px;
+        }
+
+        .footer {
+            background-color: #f5f5f5;
+        }
+
+        .footer>.container {
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+    </style>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a href="" class="navbar-brand">푸린도서관</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item {% if selected_menu == 1 %}active{% endif %}">
+                        <a href="" class="nav-link">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item {% if selected_menu == 2 %}active{% endif %}">
+                        <a href="" class="nav-link">
+                            Search
+                        </a>
+                    </li>
+                    <li class="nav-item {% if selected_menu == 3 %}active{% endif %}">
+                        <a href="" class="nav-link">
+                            Vocaloid
+                        </a>
+                    </li>
+                    <li class="nav-item {% if selected_menu == 4 %}active{% endif %}">
+                        <a href="" class="nav-link">
+                            Anime OST
+                        </a>
+                    </li>
+                </ul>
+                <form action="" class="form-inline mt-2 mt-md-0">
+                    <input type="text" class="form-control mr-sm-2" placeholder="어떤 곡을 찾아드릴까요?" aria-label="Search" />
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                        <svg class="bi bi-search" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="flex-shrink-0">
+        {% block content %}
+        {% endblock %}
+
+    </main>
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <span class="text-muted">Contact us: purinlibrary@gmail.com</span>
+        </div>
+    </footer>
+</body>
+
+</html>

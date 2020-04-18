@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import (
     ListView,
     DetailView,
+    TemplateView,
 )
 
 
@@ -23,13 +24,16 @@ from .models import Song
 
 
 def test(request):
-    pass
+    return render(request, 'main.html', context={'selected_menu': 1})
+
+class HowtoView(TemplateView):
+    template_name = ''
+
 
 class SongList(ListView):
     model = Song
+    template_name = 'search.html'
 
-    def get(self, request, *args, **kwargs):
-        return
 
 
 
