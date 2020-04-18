@@ -1,5 +1,11 @@
 import csv
 
+from songbook.constants import VOCALOID_GROUP
+from songbook.models import (
+    Song,
+    SongGroup,
+)
+
 
 def get_csv_data(file_name: str):
     """csv 파일을 읽고 리스트로 묶어준다.
@@ -8,7 +14,7 @@ def get_csv_data(file_name: str):
     :return:
         (list): csv 파일에 담겨있는 정보가 Wrapping된 리스트
     """
-    csvfile = open(f'{file_name}', 'r', encoding='utf-8')
+    csvfile = open(file_name, 'r', encoding='utf_32')
     reader = csv.reader(csvfile)
 
     csv_data_list = []
@@ -19,23 +25,41 @@ def get_csv_data(file_name: str):
     return csv_data_list
 
 
-def remove_hidden_mark(song_number: str) -> int:
+def remove_hidden_mark(song_number: str):
     """ 기기에 대한 정보가 담긴 마크를 제거하고 정수로 변환해준다.
 
     :param song_number: 노래 번호
-    :return:
-        (int): 노래 번호
+    :return:노래 번호
     """
-    song_number_str = str(song_number)
-    if song_number_str[-1] in 'ⓗⓢⓕⓛ':
-        return int(song_number_str[:-1])
+
+    # 미수록곡 early exit
+    if (song_number is None) or (song_number == ''):
+        return None
+
+    if song_number[-1] in 'ⓗⓢⓕⓛ':
+        return song_number[:-1]
     else:
-        return int(song_number_str)
+        return song_number
 
 
-def xxx_filter(song_number: str) -> str:
+def xxx_filter(song_number: str):
     # 나무위키에서 수록되지 않은 곡의 경우 XXX로 표시한다.
-    return song_number if song_number != 'XXX' else ''
+    return None if song_number == 'XXX' else song_number
+
+
+def origin_song_name_velidation(origin:str, korean:str):
+    """원어 제목의 괄호를 삭제하고 원어제목이 비어있는 경우 (숫자 또는 영어)
+    한국어 제목을 넣어준다.
+
+    :param origin: 원어 제목
+    :param korean: 한국어 제목
+    :return: 원어 제목
+    """
+    if origin == '':
+        return korean
+
+    result = origin.replace('(', '')
+    return result.replace(')', '')
 
 
 def two_line_validater(csv_file_name: str, contry: str):
@@ -65,7 +89,7 @@ def two_line_validater(csv_file_name: str, contry: str):
     """
 
     # 결과로 출력할 파일 생성
-    result_csv_file = open('result.csv', 'w', encoding='utf-8', newline='')
+    result_csv_file = open('result.csv', 'w', encoding='shift_jis', newline='')
     writer = csv.writer(result_csv_file)
 
     # 가져오려는 파일의 정보를 리스트로 가져옴
@@ -82,7 +106,10 @@ def two_line_validater(csv_file_name: str, contry: str):
             continue
 
         next_index = index + 1
-        next_row = csv_data_list[next_index]
+        if next_index < last_index:
+            next_row = csv_data_list[next_index]
+        else:
+            next_row = ['a' for _ in range(column_count)]
 
         # 다음 줄이 빈 줄이 아닌 경우
         if bool(next_row[0]):
@@ -93,11 +120,102 @@ def two_line_validater(csv_file_name: str, contry: str):
             next_row[title_index] = current_row[title_index]
 
         # 파일에 입력한다.
-        writer.writerow(current_row)
-        writer.writerow(next_row)
+        result_row = current_row + next_row
+        writer.writerow(result_row)
 
     result_csv_file.close()
 
 
-def auto_inserter_from_csv(csvfile: str):
-    pass
+def create_bulk_list(csv_file_name: str, contry: str):
+    """지정된 형식에 맞게 들어온 데이터를 가공한다.
+
+        한국 데이터의 경우 TJ, KY, 곡 제목, 작곡가,
+                             ,   , 일본제목,       ,
+        일본 데이터의 경우 DAM, UGA, JOYS, 곡 제목,        ,
+                              ,    ,     , 한국제목, 작곡가,
+
+
+        다음과 같은 형식으로 변경한다.
+        {
+            'tj':
+            'ky':
+            'dam':
+            'uga':
+            'joy':
+            'song_name_origin':
+            'song_name_korean':
+            'singer':
+            'group':
+            'lyrics':
+        }
+
+        :param csvfile:
+        :return:
+    """
+
+    VOCALOID_GROUP_FOREIGN_KEY = SongGroup.objects.get(group_name=VOCALOID_GROUP)
+
+    csv_data_list = get_csv_data(csv_file_name)
+    bulk_list = []
+    for row in csv_data_list:
+        if contry == 'KOR':
+            field_dict = {
+                'tj': remove_hidden_mark(xxx_filter(row[0])),
+                'ky': remove_hidden_mark(xxx_filter(row[1])),
+                'dam': None,
+                'uga': None,
+                'joy': None,
+                'song_name_origin': origin_song_name_velidation(row[6], row[2]),
+                'song_name_korean': row[2],
+                'singer': row[3],
+                'group': VOCALOID_GROUP_FOREIGN_KEY,
+                'lyrics': None,
+            }
+        else:
+            field_dict = {
+                'tj': None,
+                'ky': None,
+                'dam': remove_hidden_mark(xxx_filter(row[0])),
+                'uga': remove_hidden_mark(xxx_filter(row[1])),
+                'joy': remove_hidden_mark(xxx_filter(row[2])),
+                'song_name_origin': row[3],
+                'song_name_korean': row[8],
+                'singer': row[9],
+                'group': VOCALOID_GROUP_FOREIGN_KEY,
+                'lyrics': None,
+            }
+        bulk_list.append(field_dict)
+
+    return bulk_list
+
+
+def classify_exist_song(bulk_list):
+    exist = []
+    non_exist = []
+
+    exist_song_name_list = [song.song_name_korean for song in Song.objects.all()]
+
+    for bulk_data_dict in bulk_list:
+        if bulk_data_dict['song_name_korean'] in exist_song_name_list:
+            exist.append(bulk_data_dict)
+        else:
+            non_exist.append(bulk_data_dict)
+
+    return {'for_create': non_exist, 'for_update': exist}
+
+
+def auto_inserter_from_csv(csv_file_name: str, contry: str):
+    bulk_list_for_create = []
+
+    non_classified_bulk_list = create_bulk_list(csv_file_name, contry)
+
+    classified_bulk_data_dict = classify_exist_song(non_classified_bulk_list)
+
+    for field_data_dict in classified_bulk_data_dict['for_create']:
+        bulk_list_for_create.append(Song(**field_data_dict))
+    Song.objects.bulk_create(bulk_list_for_create, ignore_conflicts=True)
+
+    for field_data_dict in classified_bulk_data_dict['for_update']:
+        song_name_korean = field_data_dict['song_name_korean']
+        Song.objects.filter(song_name_korean=song_name_korean).update(**field_data_dict)
+

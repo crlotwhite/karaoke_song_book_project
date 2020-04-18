@@ -23,13 +23,14 @@ class Song(models.Model):
     song_name_korean = models.CharField(max_length=100, help_text='노래 제목 (한국어)')
     singer = models.CharField(max_length=20, help_text='가수(프로듀서)')
     group = models.ForeignKey(SongGroup, help_text='그룹 (애니메이션 제목/보컬로이드)', on_delete=models.CASCADE)
-    tj = models.IntegerField(help_text='TJ 노래방 번호', null=True)
-    ky = models.IntegerField(help_text='KY 노래방 번호', null=True)
+    tj = models.CharField(max_length=8, help_text='TJ 노래방 번호', null=True)
+    ky = models.CharField(max_length=8, help_text='KY 노래방 번호', null=True)
     dam = models.CharField(max_length=8, help_text='DAM 노래방 번호', null=True)
     uga = models.CharField(max_length=8, help_text='UGA 노래방 번호', null=True)
-    joy = models. IntegerField(help_text='Joy Sounds 노래방 번호', null=True)
+    joy = models.CharField(max_length=8, help_text='Joy Sounds 노래방 번호', null=True)
     lyrics = models.TextField(help_text='가사', null=True)
 
+    #TODO: 프록시 모델로 대체 예정
     @property
     def is_vocaloid(self):
         return self.group.group_name == VOCALOID_GROUP
