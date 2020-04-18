@@ -26,6 +26,11 @@ from .models import Song
 def test(request):
     return render(request, 'main.html', context={'selected_menu': 1})
 
+
+class MainView(TemplateView):
+    template_name = 'main.html'
+
+
 class HowtoView(TemplateView):
     template_name = ''
 

@@ -14,7 +14,7 @@ def get_csv_data(file_name: str):
     :return:
         (list): csv 파일에 담겨있는 정보가 Wrapping된 리스트
     """
-    csvfile = open(file_name, 'r', encoding='utf_32')
+    csvfile = open(file_name, 'r', encoding='utf-8')
     reader = csv.reader(csvfile)
 
     csv_data_list = []
@@ -47,7 +47,7 @@ def xxx_filter(song_number: str):
     return None if song_number == 'XXX' else song_number
 
 
-def origin_song_name_velidation(origin:str, korean:str):
+def origin_song_name_validation(origin: str, korean: str):
     """원어 제목의 괄호를 삭제하고 원어제목이 비어있는 경우 (숫자 또는 영어)
     한국어 제목을 넣어준다.
 
@@ -60,6 +60,19 @@ def origin_song_name_velidation(origin:str, korean:str):
 
     result = origin.replace('(', '')
     return result.replace(')', '')
+
+
+def korean_song_name_validation(korean: str, origin: str):
+    """영어여서 한국어로 비어있는 곡 제목을 수정한다.
+
+    :param korean: 한국어 제목
+    :param origin: 원어 제목
+    :return: 한국어 제목
+    """
+    if korean == '':
+        return origin
+
+    return korean
 
 
 def two_line_validater(csv_file_name: str, contry: str):
@@ -89,7 +102,7 @@ def two_line_validater(csv_file_name: str, contry: str):
     """
 
     # 결과로 출력할 파일 생성
-    result_csv_file = open('result.csv', 'w', encoding='shift_jis', newline='')
+    result_csv_file = open('result.csv', 'w', encoding='utf-8', newline='')
     writer = csv.writer(result_csv_file)
 
     # 가져오려는 파일의 정보를 리스트로 가져옴
@@ -162,10 +175,7 @@ def create_bulk_list(csv_file_name: str, contry: str):
             field_dict = {
                 'tj': remove_hidden_mark(xxx_filter(row[0])),
                 'ky': remove_hidden_mark(xxx_filter(row[1])),
-                'dam': None,
-                'uga': None,
-                'joy': None,
-                'song_name_origin': origin_song_name_velidation(row[6], row[2]),
+                'song_name_origin': origin_song_name_validation(row[6], row[2]),
                 'song_name_korean': row[2],
                 'singer': row[3],
                 'group': VOCALOID_GROUP_FOREIGN_KEY,
@@ -173,13 +183,11 @@ def create_bulk_list(csv_file_name: str, contry: str):
             }
         else:
             field_dict = {
-                'tj': None,
-                'ky': None,
                 'dam': remove_hidden_mark(xxx_filter(row[0])),
                 'uga': remove_hidden_mark(xxx_filter(row[1])),
                 'joy': remove_hidden_mark(xxx_filter(row[2])),
                 'song_name_origin': row[3],
-                'song_name_korean': row[8],
+                'song_name_korean': korean_song_name_validation(row[8], row[3]),
                 'singer': row[9],
                 'group': VOCALOID_GROUP_FOREIGN_KEY,
                 'lyrics': None,
@@ -218,4 +226,3 @@ def auto_inserter_from_csv(csv_file_name: str, contry: str):
     for field_data_dict in classified_bulk_data_dict['for_update']:
         song_name_korean = field_data_dict['song_name_korean']
         Song.objects.filter(song_name_korean=song_name_korean).update(**field_data_dict)
-
