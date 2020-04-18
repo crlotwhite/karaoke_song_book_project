@@ -1,4 +1,11 @@
 from django.shortcuts import render
+from django.views.generic import (
+    ListView,
+    DetailView,
+)
+
+
+from .models import Song
 
 # Create your views here.
 """
@@ -15,5 +22,14 @@ from django.shortcuts import render
 """
 
 
-def test():
+def test(request):
     pass
+
+class SongList(ListView):
+    model = Song
+
+    def get(self, request, *args, **kwargs):
+        return
+
+
+
