@@ -19,10 +19,16 @@ from django.urls import (
     include,
 )
 
-from songbook.views import MainView
+from songbook.views import (
+    MainView,
+    SearchView,
+    song_detail_view,
+)
+
 
 urlpatterns = [
-    path('', MainView.as_view()),
     path('admin/', admin.site.urls),
-    path('karaoke/', include('songbook.urls'))
+    path('', MainView.as_view()),
+    path('search/', SearchView.as_view()),
+    path('song/<int:pk>/', song_detail_view),
 ]

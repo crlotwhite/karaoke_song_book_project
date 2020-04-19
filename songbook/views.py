@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+)
 from django.views.generic import (
     ListView,
     DetailView,
@@ -35,9 +39,30 @@ class HowtoView(TemplateView):
     template_name = ''
 
 
-class SongList(ListView):
+class SearchView(ListView):
     model = Song
+    paginate_by = 20
     template_name = 'search.html'
+
+
+def song_detail_view(request, pk):
+    song = Song.objects.get(pk=pk)
+
+    json_dict = {
+        "song_name_origin": song.song_name_origin,
+        "song_name_korean": song.song_name_korean,
+        "singer": song.singer,
+        "group": song.group.group_name,
+        "tj": song.tj,
+        "ky": song.ky,
+        "dam": song.dam,
+        "uga": song.uga,
+        "joy": song.joy,
+    }
+
+    return JsonResponse(json_dict)
+
+
 
 
 

@@ -17,6 +17,9 @@ ID | Group_Name
 class SongGroup(models.Model):
     group_name = models.CharField(max_length=100, help_text='그룹 이름 (애니메이션 제목/보컬로이드)')
 
+    def __str__(self):
+        return self.group_name
+
 
 class Song(models.Model):
     song_name_origin = models.CharField(max_length=100, help_text='노래 제목 (일본어)')
@@ -30,8 +33,12 @@ class Song(models.Model):
     joy = models.CharField(max_length=8, help_text='Joy Sounds 노래방 번호', null=True)
     lyrics = models.TextField(help_text='가사', null=True)
     album_art = models.ImageField(help_text='앨범아트', null=True)
+    view_count = models.IntegerField(help_text='검색 횟수', default=0)
 
     #TODO: 프록시 모델로 대체 예정
     @property
     def is_vocaloid(self):
         return self.group.group_name == VOCALOID_GROUP
+
+    def __str__(self):
+        return self.song_name_korean

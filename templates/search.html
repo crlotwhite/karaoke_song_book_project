@@ -27,31 +27,120 @@
             </tr>
         </thead>
         <tbody>
-        {%  for song in object_list %}
+        {% if object_list %}
+            {% for song in object_list %}
             <tr>
                 <th scope="row"></th>
                 <td>
-                    {{ song.song_name_korean }}<br>
-                    ({{ song.song_name_origin }})
+                    <button class="btn px-0" data-toggle="modal" data-target="#detailModal">
+                        {{ song.song_name_korean }}<br>({{ song.song_name_origin }})
+                    </button>
                 </td>
                 <td>{{ song.singer }}</td>
                 <td>{{ song.group }}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <th scope="row"></th>
+                <td>
+                    검색 결과가 없습니다.
+                </td>
+                <td></td>
+                <td></td>
+        {% endif %}
         </tbody>
     </table>
 
     <div class="container mt-3">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        <nav aria-label="Page navigation">
+            {% if is_paginated %}
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                {% endif %}
+                <form action="" class="d-flex flex-row">
+                    <select name="pageNumberSelect" id="pageNumberSelect" class="form-control">
+                    {% for i in paginator.page_range %}
+                        <option>{{ i }}</option>
+                    {% endfor %}
+                    </select>
+                    <input type="text" class="form-control" id="pageNumber" placeholder="page">
+                </form>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                {% endif %}
             </ul>
+            {% endif %}
         </nav>
     </div>
 
+</div>
+<!-- Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">곡제목</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               <div class="d-flex flex-column flex-sm-row">
+               <div class="d-flex justify-content-center mb-3">
+                   <image src="img/Tebukuro-wo-Kai-ni-220x220.jpg" class="img-thumbnail"></image>
+               </div>
+               <div class="mr-0 pl-sm-3">
+                <ul class="list-unstyled">
+                    <li class="mb-1">한국어 제목: 僕の歌をこの世で一番最後に聴いてくれる人は誰ですか</li>
+                    <li class="mb-1">일본어 제목: 나의 노래를 이 세상에서 가장 마지막으로 들어줄 사람은 누구인가요</li>
+                    <li class="mb-1">가수/작곡자: SLAVE.V-V-R</li>
+                    <li class="mb-1">그룹: Vocaloid</li>
+                </ul>
+                </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">기기</th>
+                            <th scope="col">노래방 번호</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <th scope="row">TJ</th>
+                            <td>12345</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">KY</th>
+                            <td>12345</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DAM</th>
+                            <td>12345</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">UGA</th>
+                            <td>12345</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">JOYS</th>
+                            <td>12345</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">가사 검색하기</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

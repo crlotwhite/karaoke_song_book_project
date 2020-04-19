@@ -14,7 +14,7 @@ def get_csv_data(file_name: str):
     :return:
         (list): csv 파일에 담겨있는 정보가 Wrapping된 리스트
     """
-    csvfile = open(file_name, 'r', encoding='utf-8')
+    csvfile = open(file_name, 'r', encoding='utf-8-sig')
     reader = csv.reader(csvfile)
 
     csv_data_list = []
@@ -102,7 +102,7 @@ def two_line_validater(csv_file_name: str, contry: str):
     """
 
     # 결과로 출력할 파일 생성
-    result_csv_file = open('result.csv', 'w', encoding='utf-8', newline='')
+    result_csv_file = open('result.csv', 'w', encoding='utf-8-sig', newline='')
     writer = csv.writer(result_csv_file)
 
     # 가져오려는 파일의 정보를 리스트로 가져옴
