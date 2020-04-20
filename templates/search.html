@@ -5,17 +5,17 @@
 {% load static %}
 <script src="{% static 'js/for_search_html.js' %}"></script>
 <div class="container-fluid">
-    <form action="" class="form-inline justify-content-center flex-sm-row flex-column">
+    <form action="/search" class="form-inline justify-content-center flex-sm-row flex-column">
         <div class="form-group mb-sm-0 mb-1">
-            <select class="form-control">
-                <option>분류 없음</option>
-                <option>제목</option>
-                <option>가수/작곡자</option>
-                <option>분류</option>
+            <select class="form-control" name="category">
+                <option value="all" {% if request.GET.category == 'all' %}selected="selected"{% endif %}>분류 없음</option>
+                <option value="title" {% if request.GET.category == 'title' %}selected="selected"{% endif %}>제목</option>
+                <option value="singer" {% if request.GET.category == 'singer' %}selected="selected"{% endif %}>가수/작곡자</option>
+                <option value="group" {% if request.GET.category == 'group' %}selected="selected"{% endif %}>그룹</option>
             </select>
         </div>
         <div class="form-group mx-sm-3 flex-grow-1 mb-sm-0 mb-1">
-            <input class="form-control flex-grow-1" type="text" placeholder="Default input">
+            <input class="form-control flex-grow-1" type="text" placeholder="Default input" name="query" {% if request.GET.query %}value="{{ request.GET.query }}"{% endif %}>
         </div>
         <button class="btn btn-primary" type="submit">검색하기</button>
     </form>

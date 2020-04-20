@@ -1,16 +1,17 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import (
     render,
-    get_object_or_404,
 )
 from django.views.generic import (
     ListView,
-    DetailView,
     TemplateView,
 )
 
-
-from .models import Song
+from .models import (
+    Song,
+    SongGroup,
+)
 
 # Create your views here.
 """
@@ -34,6 +35,11 @@ def test(request):
 class MainView(TemplateView):
     template_name = 'main.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(MainView, self).get_context_data(**kwargs)
+        context.update({'selected_menu': 1})
+        return context
+
 
 class HowtoView(TemplateView):
     template_name = ''
@@ -43,6 +49,39 @@ class SearchView(ListView):
     model = Song
     paginate_by = 20
     template_name = 'search.html'
+    object_list = Song.objects.order_by('pk').all()
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
+        context.update({'selected_menu': 2})
+        return context
+
+    def get(self, request, *args, **kwargs):
+        category = request.GET.get('category')
+        query_string = request.GET.get('query')
+        if category and query_string:
+            if category == 'title':
+                filtered_song_list = Song.objects.filter(
+                    Q(song_name_origin__contains=query_string) | Q(song_name_korean__contains=query_string)
+                ).all()
+            elif category == 'singer':
+                filtered_song_list = Song.objects.filter(singer__contains=query_string).all()
+            elif category == 'group':
+                filtered_song_group_name = SongGroup.objects.filter(group_name__contains=query_string).all()
+                filtered_song_list = Song.objects.filter(group__in=filtered_song_group_name).all()
+            else:
+                filtered_song_group_name = SongGroup.objects.filter(group_name__contains=query_string).all()
+                filtered_song_list = Song.objects.filter(
+                    Q(song_name_origin__contains=query_string)
+                    | Q(song_name_korean__contains=query_string)
+                    | Q(singer__contains=query_string)
+                    | Q(group__in=filtered_song_group_name)
+                ).all()
+
+            self.object_list = filtered_song_list
+
+        context = self.get_context_data(object_list=self.object_list)
+        return self.render_to_response(context)
 
 
 def song_detail_view(request, pk):
@@ -59,6 +98,8 @@ def song_detail_view(request, pk):
         "uga": song.uga,
         "joy": song.joy,
     }
+    song.view_count = song.view_count + 1
+    song.save()
 
     return JsonResponse(json_dict)
 
