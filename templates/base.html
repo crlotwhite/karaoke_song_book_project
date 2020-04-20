@@ -43,12 +43,12 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item {% if selected_menu == 1 %}active{% endif %}">
-                        <a href="" class="nav-link">
+                        <a href="{% url 'main_page' %}" class="nav-link">
                             Home
                         </a>
                     </li>
                     <li class="nav-item {% if selected_menu == 2 %}active{% endif %}">
-                        <a href="" class="nav-link">
+                        <a href="{% url 'search_page' %}" class="nav-link">
                             Search
                         </a>
                     </li>

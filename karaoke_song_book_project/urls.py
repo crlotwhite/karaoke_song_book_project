@@ -14,10 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import (
-    path,
-    include,
-)
+from django.urls import path
 
 from songbook.views import (
     MainView,
@@ -28,7 +25,7 @@ from songbook.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', MainView.as_view()),
-    path('search/', SearchView.as_view()),
-    path('song/<int:pk>/', song_detail_view),
+    path('', MainView.as_view(), name='main_page'),
+    path('search/', SearchView.as_view(), name='search_page'),
+    path('song/<int:pk>/', song_detail_view, name='detail_page'),
 ]
