@@ -1,16 +1,61 @@
+from django import forms
+
 from django.contrib import admin
+from django.template.response import TemplateResponse
+
 from .models import (
     Song,
     SongGroup,
 )
 
+from utils.image_manager import delete_no_used_image
+
 
 # Register your models here.
+
+class AlbumArtUploadForm(forms.ModelForm):
+
+    class Meta:
+        model = Song
+        fields = [
+            'album_art'
+        ]
+
+
+class SongForm(forms.ModelForm):
+    lyrics = forms.CharField(required=False, widget=forms.Textarea)
+
+
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
-
+    form = SongForm
     list_display = [
         'song_name_korean', 'singer', 'group',
+    ]
+
+    search_fields = [
+        'song_name_korean', 'singer', 'group__group_name',
+    ]
+
+    def remove_unused_images(self, request, queryset):
+        delete_no_used_image()
+    remove_unused_images.short_description = '사용하지 않는 앨범아트 자동으로 삭제하기'
+
+    def update_album_art_for_songs(self, request, queryset):
+        if request.POST.get('start'):
+            pass
+        else:
+            context = {
+                'title': '앨범아트 일괄 업데이트',
+                'form': AlbumArtUploadForm(),
+            }
+            return TemplateResponse(request, 'admin/album_art_update.html', context)
+
+    update_album_art_for_songs.short_description = '다수의 곡 앨범아트 일괄 업데이트'
+
+    actions = [
+        remove_unused_images,
+        update_album_art_for_songs,
     ]
 
 

@@ -1,0 +1,14 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n l10n admin_urls static admin_list %}
+
+{% block content %}
+    <h1>Hi</h1>
+    <form action="" method="post" class="change-list" id="changelist-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="action" value="update_album_art_for_songs"/>
+        <input type="hidden" name="selected_action" value="update_album_art_for_songs"/>
+        <input type="hidden" name="start" value="start" />
+        <input type="submit" value="저장하기">
+    </form>
+{% endblock %}

@@ -32,7 +32,7 @@ class Song(models.Model):
     uga = models.CharField(max_length=8, help_text='UGA 노래방 번호', null=True)
     joy = models.CharField(max_length=8, help_text='Joy Sounds 노래방 번호', null=True)
     lyrics = models.TextField(help_text='가사', null=True)
-    album_art = models.ImageField(help_text='앨범아트', null=True)
+    album_art = models.ImageField(help_text='앨범아트', null=True, upload_to='img/album_arts')
     view_count = models.IntegerField(help_text='검색 횟수', default=0)
 
     #TODO: 프록시 모델로 대체 예정
