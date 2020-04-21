@@ -1,5 +1,12 @@
+from django import forms
+
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import (
+    JsonResponse,
+    HttpResponseRedirect,
+    HttpResponseForbidden,
+)
+from django.urls import reverse
 from django.shortcuts import (
     render,
 )
@@ -104,7 +111,23 @@ def song_detail_view(request, pk):
     return JsonResponse(json_dict)
 
 
+class AlbumArtUploadForm(forms.Form):
+    album_art = forms.ImageField()
 
 
+def update_album_art_view(request):
+    """Form으로 입력한 이미지를 일괄 저장 한다.
+    저장 완료후 Song 어드민으로 이동한다.
+    """
+    if request.method == 'POST':
+        form = AlbumArtUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            song_list = request.POST.get('song_list').split(' ')
+            for song_pk in song_list:
+                if not isinstance(song_pk, int):
+                    continue
+                Song.objects.filter(pk=song_pk).update(album_art=form.cleaned_data['album_art'])
 
+            return HttpResponseRedirect(reverse('admin:songbook_song_changelist'))
+    return HttpResponseForbidden('allowed only via POST')
 

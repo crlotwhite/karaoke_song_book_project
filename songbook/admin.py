@@ -12,16 +12,6 @@ from utils.image_manager import delete_no_used_image
 
 
 # Register your models here.
-
-class AlbumArtUploadForm(forms.ModelForm):
-
-    class Meta:
-        model = Song
-        fields = [
-            'album_art'
-        ]
-
-
 class SongForm(forms.ModelForm):
     lyrics = forms.CharField(required=False, widget=forms.Textarea)
 
@@ -42,14 +32,11 @@ class SongAdmin(admin.ModelAdmin):
     remove_unused_images.short_description = '사용하지 않는 앨범아트 자동으로 삭제하기'
 
     def update_album_art_for_songs(self, request, queryset):
-        if request.POST.get('start'):
-            pass
-        else:
-            context = {
-                'title': '앨범아트 일괄 업데이트',
-                'form': AlbumArtUploadForm(),
-            }
-            return TemplateResponse(request, 'admin/album_art_update.html', context)
+        context = {
+            'title': '앨범아트 일괄 업데이트',
+            'song_list': queryset,
+        }
+        return TemplateResponse(request, 'admin/album_art_update.html', context)
 
     update_album_art_for_songs.short_description = '다수의 곡 앨범아트 일괄 업데이트'
 

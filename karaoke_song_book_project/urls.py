@@ -20,6 +20,7 @@ from songbook.views import (
     MainView,
     SearchView,
     song_detail_view,
+    update_album_art_view,
 )
 
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path('', MainView.as_view(), name='main_page'),
     path('search/', SearchView.as_view(), name='search_page'),
     path('song/<int:pk>/', song_detail_view, name='detail_page'),
+    path('updatealbumart/', update_album_art_view, name='update_album_art'),
 ]
