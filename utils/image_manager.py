@@ -22,3 +22,10 @@ def delete_no_used_image():
 
     for img in all_img_file_list:
         os.remove('{}{}'.format(path, img))
+
+
+def upload_album_art_file(img):
+    file_path = MEDIA_ROOT + '/img/album_arts/{}'.format(img.name)
+    with open(file_path, 'wb+') as img_destination:
+        for chunk in img.chunks():
+            img_destination.write(chunk)

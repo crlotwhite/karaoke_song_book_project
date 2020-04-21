@@ -18,6 +18,7 @@ from django.views.generic import (
 from .models import (
     Song,
     SongGroup,
+    AlbumArtImage,
 )
 
 # Create your views here.
@@ -111,8 +112,10 @@ def song_detail_view(request, pk):
     return JsonResponse(json_dict)
 
 
-class AlbumArtUploadForm(forms.Form):
-    album_art = forms.ImageField()
+class AlbumArtUploadModelForm(forms.ModelForm):
+    class Meta:
+        model = AlbumArtImage
+        fields = ['name', 'image', ]
 
 
 def update_album_art_view(request):
@@ -120,13 +123,20 @@ def update_album_art_view(request):
     저장 완료후 Song 어드민으로 이동한다.
     """
     if request.method == 'POST':
-        form = AlbumArtUploadForm(request.POST, request.FILES)
+        form = AlbumArtUploadModelForm(request.POST, request.FILES)
         if form.is_valid():
+            form.save()
+
             song_list = request.POST.get('song_list').split(' ')
             for song_pk in song_list:
-                if not isinstance(song_pk, int):
+                try:
+                    song_pk_int = int(song_pk)
+                except ValueError:
                     continue
-                Song.objects.filter(pk=song_pk).update(album_art=form.cleaned_data['album_art'])
+
+                song = Song.objects.get(pk=song_pk_int)
+                song.album_art = form.instance
+                song.save()
 
             return HttpResponseRedirect(reverse('admin:songbook_song_changelist'))
     return HttpResponseForbidden('allowed only via POST')

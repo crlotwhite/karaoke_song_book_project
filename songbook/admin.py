@@ -32,9 +32,11 @@ class SongAdmin(admin.ModelAdmin):
     remove_unused_images.short_description = '사용하지 않는 앨범아트 자동으로 삭제하기'
 
     def update_album_art_for_songs(self, request, queryset):
+        from .views import AlbumArtUploadModelForm
         context = {
             'title': '앨범아트 일괄 업데이트',
             'song_list': queryset,
+            'form': AlbumArtUploadModelForm(),
         }
         return TemplateResponse(request, 'admin/album_art_update.html', context)
 

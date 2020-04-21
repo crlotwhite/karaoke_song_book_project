@@ -21,6 +21,14 @@ class SongGroup(models.Model):
         return self.group_name
 
 
+class AlbumArtImage(models.Model):
+    name = models.CharField(max_length=100, help_text='앨범 아트 이름')
+    image = models.ImageField(help_text='앨범아트 이미지 파일', null=True, upload_to='img/album_arts')
+
+    def __str__(self):
+        return self.name
+
+
 class Song(models.Model):
     song_name_origin = models.CharField(max_length=100, help_text='노래 제목 (일본어)')
     song_name_korean = models.CharField(max_length=100, help_text='노래 제목 (한국어)')
@@ -32,13 +40,22 @@ class Song(models.Model):
     uga = models.CharField(max_length=8, help_text='UGA 노래방 번호', null=True)
     joy = models.CharField(max_length=8, help_text='Joy Sounds 노래방 번호', null=True)
     lyrics = models.TextField(help_text='가사', null=True)
-    album_art = models.ImageField(help_text='앨범아트', null=True, upload_to='img/album_arts')
+    album_art = models.ForeignKey(AlbumArtImage, help_text='앨범아트', on_delete=models.CASCADE, null=True)
     view_count = models.IntegerField(help_text='검색 횟수', default=0)
-
-    #TODO: 프록시 모델로 대체 예정
-    @property
-    def is_vocaloid(self):
-        return self.group.group_name == VOCALOID_GROUP
 
     def __str__(self):
         return self.song_name_korean
+
+
+class VocaloidSongManager(models.Manager):
+    def get_queryset(self):
+        return super(VocaloidSongManager, self).get_queryset().filter(
+            group=SongGroup.objects.get(group_name=VOCALOID_GROUP)
+        )
+
+
+class VocaloidSong(Song):
+    object = VocaloidSongManager()
+
+    class Meta:
+        proxy = True
