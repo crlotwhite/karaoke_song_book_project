@@ -1,13 +1,5 @@
 $(function(){
-    console.log(`    /\\_____/\\
-   /  o   o  \\
-  ( ==  ^  == )
-   )         (
-  (           )
- ( (  )   (  ) )
-(__(__)___(__)__)
-여기서 나쁜짓하면 않된다냥!!!
-    `);
+    modal_controler();
 });
 
 function get_params_parser() {
@@ -41,4 +33,29 @@ function go_to_page_using_select() {
 function go_to_page_using_input() {
     let pageNumberInput = document.getElementById("pageNumberInput");
     go_to_page(pageNumberInput.value);
+}
+
+function modal_controler() {
+    $('#detailModal').on('show.bs.modal', function (event) {
+        let pk = $(event.relatedTarget).data('pk');
+        let modal = $(this);
+        $.ajax({
+            url: `/song/${pk}`,
+            type: "GET",
+            dataType: "json",
+            success: function (json) {
+                modal.find('#detailModalLabel').text(json.song_name_korean);
+                modal.find('#id_title_kor').text(json.song_name_korean);
+                modal.find('#id_title_jpn').text(json.song_name_origin);
+                modal.find('#id_singer').text(json.singer);
+                modal.find('#id_group').text(json.group);
+                modal.find('#id_tj').text(json.tj !== null ? json.tj : "없음");
+                modal.find('#id_ky').text(json.ky !== null ? json.ky : "없음");
+                modal.find('#id_dam').text(json.dam !== null ? json.dam : "없음");
+                modal.find('#id_uga').text(json.uga !== null ? json.uga : "없음");
+                modal.find('#id_joy').text(json.joy !== null ? json.joy : "없음");
+            },
+        });
+
+    })
 }
