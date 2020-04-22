@@ -54,6 +54,13 @@ function modal_controler() {
                 modal.find('#id_dam').text(json.dam !== null ? json.dam : "없음");
                 modal.find('#id_uga').text(json.uga !== null ? json.uga : "없음");
                 modal.find('#id_joy').text(json.joy !== null ? json.joy : "없음");
+                $('#id_help_google').click(function () {
+                    let googleSearchUrl = `https://www.google.com/search?q=${json.song_name_korean}+가사`
+                    let win = window.open(googleSearchUrl, '_blank');
+                    win.focus();
+                })
+
+
             },
         });
 
