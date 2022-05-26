@@ -175,7 +175,7 @@ def create_bulk_list(csv_file_name: str, contry: str):
             field_dict = {
                 'tj': remove_hidden_mark(xxx_filter(row[0])),
                 'ky': remove_hidden_mark(xxx_filter(row[1])),
-                'song_name_origin': origin_song_name_validation(row[6], row[2]),
+                'song_name_origin': origin_song_name_validation(row[6], row[2]) if len(row) > 4 else row[2],
                 'song_name_korean': row[2],
                 'singer': row[3],
                 'group': VOCALOID_GROUP_FOREIGN_KEY,
@@ -188,7 +188,7 @@ def create_bulk_list(csv_file_name: str, contry: str):
                 'joy': remove_hidden_mark(xxx_filter(row[2])),
                 'song_name_origin': row[3],
                 'song_name_korean': korean_song_name_validation(row[8], row[3]),
-                'singer': row[9],
+                'singer': row[8],
                 'group': VOCALOID_GROUP_FOREIGN_KEY,
                 'lyrics': None,
             }
